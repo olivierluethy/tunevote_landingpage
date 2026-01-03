@@ -1,0 +1,124 @@
+---
+// src/components/LiveVotingDemo.astro
+export interface Props {
+  initialVotes: { yes: number; no: number; idk: number };
+}
+
+const { initialVotes } = Astro.props;
+
+// For client-side simulated live updates (exactly like original setInterval)
+---
+
+<section class="py-20 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">Live Voting in Action</h2>
+      <p class="text-xl text-gray-400">See democracy in music</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Voting Card -->
+      <div class="bg-black/40 backdrop-blur rounded-2xl p-8 border border-white/10">
+        <div class="flex items-center space-x-4 mb-6">
+          <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl w-20 h-20 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold">Shape of You</h3>
+            <p class="text-gray-400">Ed Sheeran</p>
+          </div>
+        </div>
+
+        <div class="space-y-4 mb-8" id="vote-bars">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center space-x-2">
+              <span class="text-2xl">👍</span>
+              <span>Yes (<span id="yes-count">{initialVotes.yes}</span>)</span>
+            </span>
+            <div class="w-full max-w-xs bg-gray-700 rounded-full h-3 mx-4">
+              <div id="yes-bar" class="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-500" style={`width: ${initialVotes.yes / (initialVotes.yes + initialVotes.no + initialVotes.idk) * 100}%`} />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="flex items-center space-x-2">
+              <span class="text-2xl rotate-180">👍</span>
+              <span>No (<span id="no-count">{initialVotes.no}</span>)</span>
+            </span>
+            <div class="w-full max-w-xs bg-gray-700 rounded-full h-3 mx-4">
+              <div id="no-bar" class="bg-gradient-to-r from-red-400 to-red-600 h-3 rounded-full transition-all duration-500" style={`width: ${initialVotes.no / (initialVotes.yes + initialVotes.no + initialVotes.idk) * 100}%`} />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="flex items-center space-x-2">
+              <span class="text-2xl">🤷</span>
+              <span>IDK (<span id="idk-count">{initialVotes.idk}</span>)</span>
+            </span>
+            <div class="w-full max-w-xs bg-gray-700 rounded-full h-3 mx-4">
+              <div id="idk-bar" class="bg-gradient-to-r from-yellow-400 to-yellow-600 h-3 rounded-full transition-all duration-500" style={`width: ${initialVotes.idk / (initialVotes.yes + initialVotes.no + initialVotes.idk) * 100}%`} />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex space-x-3">
+          <button class="flex-1 py-3 rounded-lg bg-green-600 hover:bg-green-700 transition-colors font-semibold">👍 Yes</button>
+          <button class="flex-1 py-3 rounded-lg bg-red-600 hover:bg-red-700 transition-colors font-semibold">👎 No</button>
+          <button class="flex-1 py-3 rounded-lg bg-yellow-600 hover:bg-yellow-700 transition-colors font-semibold">🤷 IDK</button>
+        </div>
+      </div>
+
+      <!-- Side Info Cards -->
+      <div class="space-y-6">
+        <div class="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
+          <h3 class="text-xl font-semibold mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            Tie-Breaker Mode
+          </h3>
+          <p class="text-gray-300">
+            When votes are tied, our smart algorithm randomly selects a winner with a dramatic countdown!
+          </p>
+        </div>
+
+        <div class="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
+          <h3 class="text-xl font-semibold mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            DJ Effects
+          </h3>
+          <p class="text-gray-300">
+            Hosts can enable loops, pitch shifts, reverse playback, and more for creative sessions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script client:load>
+  // Simulate live vote updates every 3 seconds (exactly like original React version)
+  let votes = { yes: {{ initialVotes.yes }}, no: {{ initialVotes.no }}, idk: {{ initialVotes.idk }} };
+
+  const updateVotes = () => {
+    votes.yes += Math.floor(Math.random() * 3);
+    votes.no += Math.floor(Math.random() * 2);
+    votes.idk += Math.floor(Math.random() * 2);
+
+    const total = votes.yes + votes.no + votes.idk;
+
+    document.getElementById('yes-count').textContent = votes.yes;
+    document.getElementById('no-count').textContent = votes.no;
+    document.getElementById('idk-count').textContent = votes.idk;
+
+    document.getElementById('yes-bar').style.width = `${(votes.yes / total) * 100}%`;
+    document.getElementById('no-bar').style.width = `${(votes.no / total) * 100}%`;
+    document.getElementById('idk-bar').style.width = `${(votes.idk / total) * 100}%`;
+  };
+
+  setInterval(updateVotes, 3000);
+</script>
