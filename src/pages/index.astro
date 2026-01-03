@@ -1,7 +1,7 @@
 ---
 // src/pages/index.astro
 import '../styles/global.css';
-import { Music, Play, Users, Zap, Heart, Shuffle, Headphones, Mic, Sparkles } from 'lucide-astro';
+import { Music, Play, Users } from 'lucide-astro';
 
 import TopArtistsTable from '../components/TopArtistsTable.astro';
 import TopWeeklySongsTable from '../components/TopWeeklySongsTable.astro';
@@ -10,13 +10,9 @@ import ArtistDashboardSection from '../components/ArtistDashboardSection.astro';
 import HowItWorksSection from '../components/HowItWorksSection.astro';
 import AISuggestionsSection from '../components/AISuggestionsSection.astro';
 
-// Server-side fetch for initial data (SEO-friendly + fast first paint)
-const [topArtistsRes, topWeeklyRes] = await Promise.all([
-  fetch('http://localhost:4000/top-today').then(r => r.json()).catch(() => []),
-  fetch('http://localhost:4000/top-weekly-songs').then(r => r.json()).catch(() => [])
-]);
+export const prerender = true;
 
-// Mock live votes for demo (same as original)
+// Mock live votes for demo (gleich wie vorher)
 const initialVotes = { yes: 42, no: 8, idk: 15 };
 
 // Queue preview data
@@ -27,7 +23,7 @@ const queue = [
 ];
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -41,8 +37,6 @@ const queue = [
     <meta property="og:image" content="/og-image.jpg" />
     <meta property="og:url" content="https://tunevote.app" />
     <meta property="og:type" content="website" />
-
-    <!-- Favicons, etc. can be added later -->
   </head>
 
   <body class="bg-black text-white min-h-screen">
@@ -52,18 +46,12 @@ const queue = [
         <div class="flex justify-between items-center h-16">
           <a href="/" class="flex items-center space-x-2">
             <Music class="w-8 h-8 text-purple-400" />
-            <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              TuneVote
-            </span>
+            <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">TuneVote</span>
           </a>
           <div class="flex space-x-4">
-            <a href="/dashboard" class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 font-semibold hover:shadow-lg hover:shadow-purple-500/40 transition-all">
-              Start Session
-            </a>
+            <a href="/dashboard" class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 font-semibold hover:shadow-lg hover:shadow-purple-500/40 transition-all">Start Session</a>
             <form action="http://localhost:4000/join" method="POST" class="inline">
-              <button type="submit" class="px-4 py-2 rounded-lg border border-purple-400 text-purple-300 hover:bg-purple-400/20 font-semibold transition-all">
-                Join Session
-              </button>
+              <button type="submit" class="px-4 py-2 rounded-lg border border-purple-400 text-purple-300 hover:bg-purple-400/20 font-semibold transition-all">Join Session</button>
             </form>
           </div>
         </div>
@@ -74,12 +62,9 @@ const queue = [
     <section class="pt-32 pb-20 px-4 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl"></div>
       <div class="max-w-7xl mx-auto relative z-10 text-center">
-        <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-          TuneVote
-        </h1>
-        <p class="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">
-          Collaborative Music Sessions – Vote, Play, Enjoy.
-        </p>
+        <h1 class="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">TuneVote</h1>
+        <p class="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">Collaborative Music Sessions – Vote, Play, Enjoy.</p>
+
         <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
           <a href="/dashboard" class="group px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-semibold text-lg flex items-center justify-center space-x-2 hover:shadow-2xl hover:shadow-purple-500/50 transition-all">
             <Play class="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -148,25 +133,21 @@ const queue = [
             })}
           </div>
           <div class="mt-8 flex justify-center gap-4">
-            <button class="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-semibold hover:shadow-xl hover:shadow-purple-500/30 transition-all">
-              Vote Now
-            </button>
-            <button class="px-8 py-3 bg-white/10 backdrop-blur rounded-full font-semibold border border-white/20 hover:bg-white/20 transition-all">
-              See Results
-            </button>
+            <button class="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-semibold hover:shadow-xl hover:shadow-purple-500/30 transition-all">Vote Now</button>
+            <button class="px-8 py-3 bg-white/10 backdrop-blur rounded-full font-semibold border border-white/20 hover:bg-white/20 transition-all">See Results</button>
           </div>
           <p class="text-center text-sm text-gray-500 mt-6">10,109 votes • Updated live</p>
         </div>
       </div>
     </section>
 
-    <!-- Top Artists & Weekly Songs -->
+    <!-- Top Artists & Weekly Songs (Client-Loaded) -->
     <section class="py-20 px-4 bg-gradient-to-b from-black to-black/30">
       <div class="max-w-7xl mx-auto text-center mb-16">
         <h2 class="text-4xl md:text-5xl font-bold mb-4">Top Artists Today</h2>
         <p class="text-xl text-gray-400">Voted by the community – updated live</p>
       </div>
-      <TopArtistsTable initialData={topArtistsRes} />
+      <TopArtistsTable client:load />
     </section>
 
     <section class="py-20 px-4 bg-gradient-to-b from-black/30 to-black">
@@ -174,25 +155,13 @@ const queue = [
         <h2 class="text-4xl md:text-5xl font-bold mb-4">Top Songs dieser Woche</h2>
         <p class="text-xl text-gray-400">Die meistabgespielten Tracks der aktuellen Woche</p>
       </div>
-      <TopWeeklySongsTable initialData={topWeeklyRes} />
+      <TopWeeklySongsTable client:load />
     </section>
 
-	<HowItWorksSection />
-
-	<LiveVotingDemo client:load initialVotes={initialVotes} />
-
-	<ArtistDashboardSection queue={queue} />
-
-	<AISuggestionsSection />
-
-    <!-- How It Works, Live Demo, etc. -->
-    <!-- (All other sections remain visually identical using pure HTML/Tailwind) -->
-    <!-- Omitted here for brevity, but included in full version below -->
-
-    
-
-    <!-- Remaining sections: How It Works, Artist Dashboard, AI Suggestions, Footer -->
-    <!-- Full code available on request – all static, no JS needed -->
+    <HowItWorksSection />
+    <LiveVotingDemo client:load initialVotes={initialVotes} />
+    <ArtistDashboardSection client:load queue={queue} />
+    <AISuggestionsSection client:load />
 
     <!-- Footer -->
     <footer class="bg-black/50 backdrop-blur border-t border-white/10 py-12 px-4">
@@ -204,9 +173,7 @@ const queue = [
           </div>
           <div class="flex space-x-6">
             {["Twitter", "Instagram", "Discord", "GitHub"].map(s => (
-              <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                {s[0]}
-              </a>
+              <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">{s[0]}</a>
             ))}
           </div>
         </div>
