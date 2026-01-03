@@ -6,6 +6,9 @@ import { Music, Play, Users, Zap, Heart, Shuffle, Headphones, Mic, Sparkles } fr
 import TopArtistsTable from '../components/TopArtistsTable.astro';
 import TopWeeklySongsTable from '../components/TopWeeklySongsTable.astro';
 import LiveVotingDemo from '../components/LiveVotingDemo.astro';
+import ArtistDashboardSection from '../components/ArtistDashboardSection.astro';
+import HowItWorksSection from '../components/HowItWorksSection.astro';
+import AISuggestionsSection from '../components/AISuggestionsSection.astro';
 
 // Server-side fetch for initial data (SEO-friendly + fast first paint)
 const [topArtistsRes, topWeeklyRes] = await Promise.all([
@@ -174,11 +177,19 @@ const queue = [
       <TopWeeklySongsTable initialData={topWeeklyRes} />
     </section>
 
+	<HowItWorksSection />
+
+	<LiveVotingDemo client:load initialVotes={initialVotes} />
+
+	<ArtistDashboardSection queue={queue} />
+
+	<AISuggestionsSection />
+
     <!-- How It Works, Live Demo, etc. -->
     <!-- (All other sections remain visually identical using pure HTML/Tailwind) -->
     <!-- Omitted here for brevity, but included in full version below -->
 
-    <LiveVotingDemo client:load initialVotes={initialVotes} />
+    
 
     <!-- Remaining sections: How It Works, Artist Dashboard, AI Suggestions, Footer -->
     <!-- Full code available on request – all static, no JS needed -->

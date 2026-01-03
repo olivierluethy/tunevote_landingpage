@@ -1,0 +1,137 @@
+---
+// src/components/ArtistDashboardSection.astro
+
+// Die Queue-Daten aus der Hauptseite übergeben (oder hier hart definieren)
+export interface Props {
+  queue?: Array<{
+    id: number;
+    title: string;
+    artist: string;
+    votes: number;
+    cover: string;
+  }>;
+}
+
+const { queue = [
+  { id: 1, title: "Blinding Lights", artist: "The Weeknd", votes: 89, cover: "https://upload.wikimedia.org/wikipedia/commons/a/a0/The_Weeknd_Portrait_by_Brian_Ziff.jpg" },
+  { id: 2, title: "Levitating", artist: "Dua Lipa", votes: 76, cover: "https://upload.wikimedia.org/wikipedia/commons/7/72/DuaLipa-byPhilipRomano.jpg" },
+  { id: 3, title: "Good 4 U", artist: "Olivia Rodrigo", votes: 71, cover: "https://upload.wikimedia.org/wikipedia/commons/b/b7/Glasto2025-546_%28cropped%29_%282%29.jpg" },
+] } = Astro.props;
+
+import { Mic } from 'lucide-astro';
+---
+
+<section class="py-20 px-4 bg-black/30">
+  <div class="max-w-7xl mx-auto">
+    <!-- Heading -->
+    <div class="text-center mb-16 opacity-0 translate-y-8 animate-fade-in-up">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">
+        For Artists & DJs
+      </h2>
+      <p class="text-xl text-gray-400">
+        Engage fans like never before
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12">
+      <!-- DJ Dashboard Card -->
+      <div class="bg-gradient-to-br from-purple-900/50 to-pink-900/50 backdrop-blur rounded-3xl p-8 border border-white/10 opacity-0 translate-y-8 animate-fade-in-up animation-delay-200">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="text-2xl font-bold">DJ Dashboard</h3>
+            <p class="text-gray-400">Control the flow</p>
+          </div>
+          <Mic class="w-12 h-12 text-purple-400" />
+        </div>
+
+        <div class="space-y-4">
+          {queue.map((song, i) => (
+            <div
+              class="flex items-center space-x-4 bg-black/30 rounded-xl p-4 opacity-0 translate-x-[-20px] animate-slide-in-left"
+              style={`animation-delay: ${i * 100 + 300}ms;`}
+            >
+              <img
+                src={song.cover}
+                alt={song.title}
+                class="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+              />
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold truncate">{song.title}</p>
+                <p class="text-sm text-gray-400 truncate">{song.artist}</p>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <p class="text-2xl font-bold text-purple-400">{song.votes}</p>
+                <p class="text-xs text-gray-400">votes</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-8 flex space-x-3">
+          <button class="flex-1 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 transition-colors font-semibold">
+            Go Live
+          </button>
+          <button class="flex-1 py-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors font-semibold border border-white/20">
+            Manage Queue
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Side Cards -->
+      <div class="space-y-6">
+        <div class="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 opacity-0 translate-y-8 animate-fade-in-up animation-delay-400">
+          <h3 class="text-2xl font-bold mb-4">💰 Monetization</h3>
+          <p class="text-gray-300 mb-4">
+            Fans can subscribe to your exclusive sessions and tip during live performances.
+          </p>
+          <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-black rounded-lg p-4 font-bold">
+            Earn up to $500/session
+          </div>
+        </div>
+
+        <div class="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 opacity-0 translate-y-8 animate-fade-in-up animation-delay-600">
+          <h3 class="text-2xl font-bold mb-4">📊 Real-time Analytics</h3>
+          <p class="text-gray-300">
+            See which songs resonate most with your audience and build better sets.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out forwards;
+  }
+
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
+  .animation-delay-600 { animation-delay: 600ms; }
+</style>
