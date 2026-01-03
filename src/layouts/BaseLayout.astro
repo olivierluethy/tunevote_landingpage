@@ -1,0 +1,99 @@
+---
+// src/layouts/BaseLayout.astro
+import "../styles/global.css";
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "TuneVote – Collaborative music sessions where the crowd decides what plays next." } = Astro.props;
+
+const fullTitle = `${title} | TuneVote`;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!-- Favicon (add your own later) -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Optional: Google Fonts for extra polish -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+
+  <body class="relative">
+    <!-- Optional subtle background gradient -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-pink-900/20"></div>
+    </div>
+
+    <!-- Header / Navigation (shared across all pages) -->
+    <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-black/40 border-b border-white/10">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <a href="/" class="flex items-center space-x-3 group">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
+            </div>
+            <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-purple-300 group-hover:to-pink-300 transition-all">
+              TuneVote
+            </span>
+          </a>
+
+          <div class="flex items-center space-x-6">
+            <a href="/blog" class="text-gray-300 hover:text-white transition">Blog</a>
+            <a href="/dashboard" class="px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 font-semibold hover:shadow-lg hover:shadow-purple-500/40 transition-all">
+              Start Session
+            </a>
+            <form action="http://localhost:4000/join" method="POST" class="inline">
+              <button type="submit" class="px-5 py-2 rounded-lg border border-purple-400 text-purple-300 hover:bg-purple-400/20 font-semibold transition-all">
+                Join Session
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main content slot -->
+    <main class="pt-16"> <!-- Offset for fixed header -->
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/50 backdrop-blur border-t border-white/10 py-12 mt-20">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <div class="flex items-center justify-center space-x-2 mb-6">
+          <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            TuneVote
+          </span>
+        </div>
+        <p class="text-sm text-gray-400">
+          © {new Date().getFullYear()} TuneVote. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
