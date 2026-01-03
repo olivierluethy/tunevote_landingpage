@@ -16,8 +16,48 @@ const { Content } = await post.render();
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="max-w-3xl mx-auto px-4 py-20 prose prose-invert">
-    <h1>{post.data.title}</h1>
-    <Content />
+  <article class="relative px-4 py-24">
+    <!-- Article container -->
+    <div class="mx-auto max-w-3xl">
+
+      <!-- Header / Hero -->
+      <header class="mb-12 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight
+                   bg-gradient-to-r from-purple-400 to-pink-400
+                   bg-clip-text text-transparent">
+          {post.data.title}
+        </h1>
+
+        {post.data.description && (
+          <p class="mt-4 text-lg text-gray-400">
+            {post.data.description}
+          </p>
+        )}
+
+        <div class="mt-6 text-sm text-gray-500">
+          <time datetime={post.data.pubDate}>
+            {new Date(post.data.pubDate).toLocaleDateString('de-DE', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </time>
+          {post.data.author && (
+            <span> · {post.data.author}</span>
+          )}
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="rounded-2xl bg-white/5 backdrop-blur
+                  border border-white/10
+                  px-6 py-10 md:px-10 md:py-12">
+
+        <div class="prose prose-invert prose-lg max-w-none">
+          <Content />
+        </div>
+
+      </div>
+    </div>
   </article>
 </BaseLayout>
