@@ -5,59 +5,139 @@ import { getCollection } from 'astro:content';
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
 
-  return posts.map(post => ({
+  const sortedPosts = posts.sort(
+    (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)
+  );
+
+  return sortedPosts.map(post => ({
     params: { slug: post.slug },
-    props: { post },
   }));
 }
 
-const { post } = Astro.props;
-const { Content } = await post.render();
+// ✅ Use Astro.params instead of Astro.props
+const { slug } = Astro.params;
+
+const posts = await getCollection('blog');
+const sortedPosts = posts.sort(
+  (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)
+);
+
+const postIndex = sortedPosts.findIndex(p => p.slug === slug);
+
+// ❌ Check for undefined
+if (postIndex === -1) throw new Error(`Blog post not found: ${slug}`);
+
+const post = sortedPosts[postIndex];
+const prev = sortedPosts[postIndex + 1] ?? null;
+const next = sortedPosts[postIndex - 1] ?? null;
+
+const { Content, headings } = await post.render();
+
+// Reading time
+const wordsPerMinute = 200;
+const wordCount = post.body.split(/\s+/).length;
+const readingTime = Math.ceil(wordCount / wordsPerMinute);
 ---
+
 
 <BaseLayout title={post.data.title} description={post.data.description}>
   <article class="relative px-4 py-24">
-    <!-- Article container -->
-    <div class="mx-auto max-w-3xl">
+    <div class="mx-auto max-w-5xl grid lg:grid-cols-[1fr_280px] gap-12">
 
-      <!-- Header / Hero -->
-      <header class="mb-12 text-center">
-        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight
-                   bg-gradient-to-r from-purple-400 to-pink-400
-                   bg-clip-text text-transparent">
-          {post.data.title}
-        </h1>
+      <!-- Main content -->
+      <div>
+        <!-- Hero -->
+        <header class="mb-12">
+          <h1 class="text-4xl md:text-5xl font-extrabold leading-tight
+                     bg-gradient-to-r from-purple-400 to-pink-400
+                     bg-clip-text text-transparent">
+            {post.data.title}
+          </h1>
 
-        {post.data.description && (
           <p class="mt-4 text-lg text-gray-400">
             {post.data.description}
           </p>
+
+          <div class="mt-6 text-sm text-gray-500 flex flex-wrap gap-2">
+            <time datetime={post.data.pubDate}>
+              {new Date(post.data.pubDate).toLocaleDateString('de-DE', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+            <span>· {readingTime} min read</span>
+            {post.data.author && <span>· {post.data.author}</span>}
+          </div>
+        </header>
+
+        <!-- Article card -->
+        <div class="rounded-2xl bg-white/5 backdrop-blur
+                    border border-white/10
+                    px-6 py-10 md:px-10 md:py-12">
+
+          <div class="prose prose-invert prose-lg max-w-none">
+            <Content />
+          </div>
+        </div>
+
+        <!-- Author card -->
+        {post.data.author && (
+          <div class="mt-12 rounded-2xl border border-white/10
+                      bg-white/5 backdrop-blur p-6 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full
+                        bg-gradient-to-br from-purple-500 to-pink-500
+                        flex items-center justify-center font-bold">
+              {post.data.author[0]}
+            </div>
+            <div>
+              <p class="font-semibold">{post.data.author}</p>
+              <p class="text-sm text-gray-400">
+                Gastgeber & Community-Mitglied bei TuneVote
+              </p>
+            </div>
+          </div>
         )}
 
-        <div class="mt-6 text-sm text-gray-500">
-          <time datetime={post.data.pubDate}>
-            {new Date(post.data.pubDate).toLocaleDateString('de-DE', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
-          {post.data.author && (
-            <span> · {post.data.author}</span>
+        <!-- Prev / Next -->
+        <nav class="mt-16 grid sm:grid-cols-2 gap-6">
+          {prev && (
+            <a href={`/blog/${prev.slug}`}
+               class="p-6 rounded-xl border border-white/10
+                      hover:border-purple-500/50 transition">
+              ← {prev.data.title}
+            </a>
           )}
-        </div>
-      </header>
 
-      <!-- Content -->
-      <div class="rounded-2xl bg-white/5 backdrop-blur
-                  border border-white/10
-                  px-6 py-10 md:px-10 md:py-12">
-
-        <div class="prose prose-invert prose-lg max-w-none">
-          <Content />
-        </div>
-
+          {next && (
+            <a href={`/blog/${next.slug}`}
+               class="p-6 rounded-xl border border-white/10
+                      hover:border-purple-500/50 transition text-right">
+              {next.data.title} →
+            </a>
+          )}
+        </nav>
       </div>
+
+      <!-- TOC -->
+      {headings.length > 0 && (
+        <aside class="hidden lg:block sticky top-32 h-fit">
+          <p class="text-sm font-semibold text-gray-400 mb-4">
+            On this page
+          </p>
+          <ul class="space-y-2 text-sm">
+            {headings.map(h => (
+              <li class={h.depth === 3 ? 'ml-4' : ''}>
+                <a href={`#${h.slug}`}
+                   class="text-gray-400 hover:text-purple-400 transition">
+                  {h.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )}
+
     </div>
   </article>
 </BaseLayout>
