@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
 
 /* Add your custom colors and theme here using v4 directives */
 @theme {
@@ -22,6 +24,12 @@
   --color-pink-400: #f472b6;
   --color-pink-500: #ec4899;
   --color-pink-600: #db2777;
+}
+.prose {
+  --tw-prose-headings: theme(colors.white);
+  --tw-prose-links: theme(colors.purple.400);
+  --tw-prose-bold: theme(colors.white);
+  --tw-prose-bullets: theme(colors.purple.400);
 }
 
 /* Any other custom CSS below */
